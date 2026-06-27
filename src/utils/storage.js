@@ -62,3 +62,26 @@ export function loadStats() {
 export function saveStats(stats) {
   localStorage.setItem(STATS_KEY, JSON.stringify(stats));
 }
+
+/**
+ * @param {Stats} stats
+ * @param {'won' | 'lost'} gameStatus
+ * @param {number} guessCount
+ * @returns {Stats}
+ */
+export function updateStats(stats, gameStatus, guessCount) {
+  const updated = { ...stats, guessDistribution: { ...stats.guessDistribution } };
+  updated.gamesPlayed += 1;
+  if (gameStatus === 'won') {
+    updated.gamesWon += 1;
+    updated.currentStreak += 1;
+    if (updated.currentStreak > updated.bestStreak) {
+      updated.bestStreak = updated.currentStreak;
+    }
+    const bucket = String(guessCount);
+    updated.guessDistribution[bucket] = (updated.guessDistribution[bucket] ?? 0) + 1;
+  } else {
+    updated.currentStreak = 0;
+  }
+  return updated;
+}

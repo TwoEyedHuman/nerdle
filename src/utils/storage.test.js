@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { loadDailyState, saveDailyState, loadStats, saveStats } from './storage.js';
+import { loadDailyState, saveDailyState, loadStats, saveStats, updateStats } from './storage.js';
 
 const TODAY = '2026-06-27';
 
@@ -92,5 +92,69 @@ describe('saveStats', () => {
     const stats = { gamesPlayed: 3, gamesWon: 2, currentStreak: 1, bestStreak: 2, guessDistribution: { '1': 0, '2': 1, '3': 1, '4': 0, '5': 0, '6': 0 } };
     saveStats(stats);
     expect(JSON.parse(localStorage.getItem('nerdle_stats'))).toEqual(stats);
+  });
+});
+
+describe('updateStats', () => {
+  const base = {
+    gamesPlayed: 5,
+    gamesWon: 3,
+    currentStreak: 2,
+    bestStreak: 4,
+    guessDistribution: { '1': 0, '2': 1, '3': 1, '4': 1, '5': 0, '6': 0 },
+  };
+
+  it('increments gamesPlayed on win', () => {
+    expect(updateStats(base, 'won', 3).gamesPlayed).toBe(6);
+  });
+
+  it('increments gamesWon on win', () => {
+    expect(updateStats(base, 'won', 3).gamesWon).toBe(4);
+  });
+
+  it('increments currentStreak on win', () => {
+    expect(updateStats(base, 'won', 3).currentStreak).toBe(3);
+  });
+
+  it('updates bestStreak when currentStreak surpasses it', () => {
+    const withHighStreak = { ...base, currentStreak: 4 };
+    expect(updateStats(withHighStreak, 'won', 1).bestStreak).toBe(5);
+  });
+
+  it('does not update bestStreak when currentStreak stays below', () => {
+    expect(updateStats(base, 'won', 3).bestStreak).toBe(4);
+  });
+
+  it('increments guessDistribution bucket for guess count', () => {
+    expect(updateStats(base, 'won', 3).guessDistribution['3']).toBe(2);
+  });
+
+  it('does not touch other buckets on win', () => {
+    const result = updateStats(base, 'won', 3);
+    expect(result.guessDistribution['1']).toBe(0);
+    expect(result.guessDistribution['2']).toBe(1);
+  });
+
+  it('increments gamesPlayed on loss', () => {
+    expect(updateStats(base, 'lost', 6).gamesPlayed).toBe(6);
+  });
+
+  it('does not increment gamesWon on loss', () => {
+    expect(updateStats(base, 'lost', 6).gamesWon).toBe(3);
+  });
+
+  it('resets currentStreak to 0 on loss', () => {
+    expect(updateStats(base, 'lost', 6).currentStreak).toBe(0);
+  });
+
+  it('does not increment guessDistribution on loss', () => {
+    const result = updateStats(base, 'lost', 6);
+    expect(result.guessDistribution['6']).toBe(0);
+  });
+
+  it('does not mutate input stats', () => {
+    const before = JSON.stringify(base);
+    updateStats(base, 'won', 2);
+    expect(JSON.stringify(base)).toBe(before);
   });
 });

@@ -4,7 +4,7 @@ import { getTodaysAnswer } from '@/utils/getTodaysAnswer';
 import { evaluateGuess } from '@/utils/evaluateGuess';
 import { validateGuess } from '@/utils/validateGuess';
 import { normalizeWord, wordsMatch } from '@/utils/wordMatch';
-import { loadDailyState, saveDailyState } from '@/utils/storage';
+import { loadDailyState, saveDailyState, loadStats, saveStats, updateStats } from '@/utils/storage';
 
 const MAX_GUESSES = 6;
 const RESULT_PRIORITY = { correct: 2, present: 1, absent: 0 };
@@ -118,6 +118,12 @@ export function useGameState() {
       gameStatus: state.gameStatus,
     });
   }, [state.answer, state.guesses, state.currentGuess, state.gameStatus]);
+
+  useEffect(() => {
+    if (state.gameStatus !== 'won' && state.gameStatus !== 'lost') return;
+    if (state.restoredComplete) return;
+    saveStats(updateStats(loadStats(), state.gameStatus, state.guesses.length));
+  }, [state.gameStatus, state.restoredComplete]);
 
   const addLetter = useCallback((letter) => dispatch({ type: 'ADD_LETTER', letter }), []);
   const deleteLetter = useCallback(() => dispatch({ type: 'DELETE_LETTER' }), []);
