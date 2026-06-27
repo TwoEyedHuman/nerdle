@@ -4,7 +4,7 @@ import Tile from './Tile'
 const ROWS = 6
 const COLS = 8
 
-export default function Board({ guesses = [], currentGuess = '', currentRow = 0 }) {
+export default function Board({ guesses = [], currentGuess = '', currentRow = 0, shake = false, shakeKey = 0 }) {
   return (
     <div className={styles.board}>
       {Array.from({ length: ROWS }, (_, rowIndex) => {
@@ -29,7 +29,7 @@ export default function Board({ guesses = [], currentGuess = '', currentRow = 0 
 
         if (rowIndex === currentRow) {
           return (
-            <div key={rowIndex} className={styles.row}>
+            <div key={`current-${shakeKey}`} className={`${styles.row} ${shake ? styles.rowShake : ''}`}>
               {Array.from({ length: COLS }, (_, colIndex) => {
                 const letter = currentGuess[colIndex] ?? ''
                 return (

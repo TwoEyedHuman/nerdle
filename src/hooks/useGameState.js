@@ -34,6 +34,7 @@ export const initialState = {
   gameStatus: 'playing',
   letterStates: {},
   error: null,
+  invalidCount: 0,
 };
 
 export function gameReducer(state, action) {
@@ -66,7 +67,7 @@ export function gameReducer(state, action) {
       if (state.gameStatus !== 'playing') return state;
       const validation = validateGuess(state.currentGuess);
       if (!validation.valid) {
-        return { ...state, error: validation.reason };
+        return { ...state, error: validation.reason, invalidCount: state.invalidCount + 1 };
       }
       const results = evaluateGuess(state.currentGuess, state.answer);
       const newGuess = { word: state.currentGuess, results };
@@ -138,6 +139,7 @@ export function useGameState() {
     gameStatus: state.gameStatus,
     letterStates: state.letterStates,
     error: state.error,
+    invalidCount: state.invalidCount,
     answer: state.answer,
     addLetter,
     deleteLetter,
