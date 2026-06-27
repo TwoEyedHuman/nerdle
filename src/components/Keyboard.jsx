@@ -6,8 +6,9 @@ const ROWS = [
   ['ENTER','Z','X','C','V','B','N','M','DELETE'],
 ]
 
-export default function Keyboard({ letterStates = {}, onKey, onDelete, onEnter }) {
+export default function Keyboard({ letterStates = {}, onKey, onDelete, onEnter, disabled = false }) {
   function handleClick(key) {
+    if (disabled) return
     if (key === 'DELETE') onDelete()
     else if (key === 'ENTER') onEnter()
     else onKey(key)
@@ -25,6 +26,7 @@ export default function Keyboard({ letterStates = {}, onKey, onDelete, onEnter }
                 className={[styles.key, styles[state], key.length > 1 ? styles.wide : ''].join(' ')}
                 onClick={() => handleClick(key)}
                 aria-label={key}
+                disabled={disabled}
               >
                 {key}
               </button>

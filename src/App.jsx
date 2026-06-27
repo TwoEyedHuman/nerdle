@@ -12,7 +12,9 @@ function App() {
   const [shake, setShake] = useState(false)
   const [shakeKey, setShakeKey] = useState(0)
   const [toast, setToast] = useState(null)
+  const [_showModal, setShowModal] = useState(false)
   const toastTimer = useRef(null)
+  const modalTimer = useRef(null)
 
   useEffect(() => {
     if (invalidCount === 0) return
@@ -25,6 +27,16 @@ function App() {
       setShake(false)
     }, 1500)
   }, [invalidCount, error])
+
+  // 800ms after last tile flip (8 tiles × 300ms stagger + 500ms duration = 2600ms)
+  const MODAL_DELAY_MS = (8 - 1) * 300 + 500 + 800;
+
+  useEffect(() => {
+    if (gameStatus !== 'won' && gameStatus !== 'lost') return
+    clearTimeout(modalTimer.current)
+    modalTimer.current = setTimeout(() => setShowModal(true), MODAL_DELAY_MS)
+    return () => clearTimeout(modalTimer.current)
+  }, [gameStatus])
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -53,6 +65,7 @@ function App() {
             currentRow={guesses.length}
             shake={shake}
             shakeKey={shakeKey}
+            winRow={gameStatus === 'won' ? guesses.length - 1 : -1}
           />
         </div>
         <Keyboard
@@ -60,6 +73,7 @@ function App() {
           onKey={addLetter}
           onDelete={deleteLetter}
           onEnter={submitGuess}
+          disabled={gameStatus !== 'playing'}
         />
       </main>
     </div>
