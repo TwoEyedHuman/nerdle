@@ -1,28 +1,26 @@
-import { loadWords } from '@/utils/loadWords'
 import styles from '@/styles/App.module.css'
 import Header from '@/components/Header'
 import Board from '@/components/Board'
 import Keyboard from '@/components/Keyboard'
-
-const DEMO_GUESSES = [
-  { word: '10+2+3=5', results: ['absent', 'correct', 'present', 'correct', 'absent', 'correct', 'absent', 'correct'] },
-]
+import { useGameState } from '@/hooks/useGameState'
 
 function App() {
+  const { guesses, currentGuess, letterStates, addLetter, deleteLetter, submitGuess } = useGameState()
+
   return (
     <div className={styles.container}>
       <Header onStatsClick={() => {}} />
       <main className={styles.main}>
         <Board
-          guesses={DEMO_GUESSES}
-          currentGuess="2+2"
-          currentRow={1}
+          guesses={guesses}
+          currentGuess={currentGuess}
+          currentRow={guesses.length}
         />
         <Keyboard
-          letterStates={{}}
-          onKey={(letter) => console.log('key', letter)}
-          onDelete={() => console.log('delete')}
-          onEnter={() => console.log('enter')}
+          letterStates={letterStates}
+          onKey={addLetter}
+          onDelete={deleteLetter}
+          onEnter={submitGuess}
         />
       </main>
     </div>
