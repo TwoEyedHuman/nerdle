@@ -134,11 +134,47 @@ describe('gameReducer — INIT', () => {
       guesses: [{ word: 'ZELDA', results: ['absent', 'present', 'absent', 'absent', 'absent'] }],
       currentGuess: 'MA',
       gameStatus: 'playing',
-      letterStates: { Z: 'absent' },
     };
     const s = gameReducer(initialState, { type: 'INIT', words: ['MARIO'], answer: 'MARIO', persisted });
     expect(s.guesses).toHaveLength(1);
     expect(s.currentGuess).toBe('MA');
-    expect(s.letterStates).toEqual({ Z: 'absent' });
+    // letterStates rebuilt from guesses, not loaded from storage
+    expect(s.letterStates).toEqual({ Z: 'absent', E: 'present', L: 'absent', D: 'absent', A: 'absent' });
+  });
+
+  it('sets restoredComplete true when persisted game is won', () => {
+    const persisted = {
+      guesses: [{ word: 'MARIO', results: ['correct', 'correct', 'correct', 'correct', 'correct'] }],
+      currentGuess: '',
+      gameStatus: 'won',
+    };
+    const s = gameReducer(initialState, { type: 'INIT', words: ['MARIO'], answer: 'MARIO', persisted });
+    expect(s.restoredComplete).toBe(true);
+    expect(s.gameStatus).toBe('won');
+  });
+
+  it('sets restoredComplete true when persisted game is lost', () => {
+    const persisted = {
+      guesses: [],
+      currentGuess: '',
+      gameStatus: 'lost',
+    };
+    const s = gameReducer(initialState, { type: 'INIT', words: ['MARIO'], answer: 'MARIO', persisted });
+    expect(s.restoredComplete).toBe(true);
+  });
+
+  it('leaves restoredComplete false when persisted game is still playing', () => {
+    const persisted = {
+      guesses: [],
+      currentGuess: 'MA',
+      gameStatus: 'playing',
+    };
+    const s = gameReducer(initialState, { type: 'INIT', words: ['MARIO'], answer: 'MARIO', persisted });
+    expect(s.restoredComplete).toBe(false);
+  });
+
+  it('leaves restoredComplete false when no persisted state', () => {
+    const s = gameReducer(initialState, { type: 'INIT', words: ['MARIO'], answer: 'MARIO', persisted: null });
+    expect(s.restoredComplete).toBe(false);
   });
 });

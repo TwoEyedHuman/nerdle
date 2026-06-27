@@ -7,7 +7,7 @@ import Toast from '@/components/Toast'
 import { useGameState } from '@/hooks/useGameState'
 
 function App() {
-  const { guesses, currentGuess, gameStatus, letterStates, error, invalidCount, addLetter, deleteLetter, submitGuess } = useGameState()
+  const { guesses, currentGuess, gameStatus, letterStates, restoredComplete, error, invalidCount, addLetter, deleteLetter, submitGuess } = useGameState()
 
   const [shake, setShake] = useState(false)
   const [shakeKey, setShakeKey] = useState(0)
@@ -29,14 +29,15 @@ function App() {
   }, [invalidCount, error])
 
   // 800ms after last tile flip (8 tiles × 300ms stagger + 500ms duration = 2600ms)
-  const MODAL_DELAY_MS = (8 - 1) * 300 + 500 + 800;
+  const FLIP_MODAL_DELAY_MS = (8 - 1) * 300 + 500 + 800;
 
   useEffect(() => {
     if (gameStatus !== 'won' && gameStatus !== 'lost') return
     clearTimeout(modalTimer.current)
-    modalTimer.current = setTimeout(() => setShowModal(true), MODAL_DELAY_MS)
+    const delay = restoredComplete ? 1000 : FLIP_MODAL_DELAY_MS
+    modalTimer.current = setTimeout(() => setShowModal(true), delay)
     return () => clearTimeout(modalTimer.current)
-  }, [gameStatus])
+  }, [gameStatus, restoredComplete])
 
   useEffect(() => {
     function handleKeyDown(e) {

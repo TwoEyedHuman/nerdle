@@ -4,14 +4,10 @@ import { getTodaysAnswer } from '@/utils/getTodaysAnswer';
 import { evaluateGuess } from '@/utils/evaluateGuess';
 import { validateGuess } from '@/utils/validateGuess';
 import { normalizeWord, wordsMatch } from '@/utils/wordMatch';
+import { loadDailyState } from '@/utils/storage';
 
 const MAX_GUESSES = 6;
-const STORAGE_KEY = 'nerdle_state';
 const RESULT_PRIORITY = { correct: 2, present: 1, absent: 0 };
-
-function getTodayString() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function mergeLetterStates(current, word, results) {
   const updated = { ...current };
@@ -33,6 +29,7 @@ export const initialState = {
   currentGuess: '',
   gameStatus: 'playing',
   letterStates: {},
+  restoredComplete: false,
   error: null,
   invalidCount: 0,
 };
@@ -42,14 +39,21 @@ export function gameReducer(state, action) {
     case 'INIT': {
       const { words, answer, persisted } = action;
       if (persisted) {
+        const savedGuesses = persisted.guesses ?? [];
+        let letterStates = {};
+        for (const { word, results } of savedGuesses) {
+          letterStates = mergeLetterStates(letterStates, word, results);
+        }
+        const savedStatus = persisted.gameStatus ?? 'playing';
         return {
           ...state,
           words,
           answer,
-          guesses: persisted.guesses ?? [],
+          guesses: savedGuesses,
           currentGuess: persisted.currentGuess ?? '',
-          gameStatus: persisted.gameStatus ?? 'playing',
-          letterStates: persisted.letterStates ?? {},
+          gameStatus: savedStatus,
+          letterStates,
+          restoredComplete: savedStatus === 'won' || savedStatus === 'lost',
         };
       }
       return { ...state, words, answer };
@@ -95,39 +99,16 @@ export function gameReducer(state, action) {
   }
 }
 
-function loadPersistedState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (parsed.date !== getTodayString()) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
 export function useGameState() {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
   useEffect(() => {
     loadWords().then((words) => {
       const answer = getTodaysAnswer(words);
-      const persisted = loadPersistedState();
+      const persisted = loadDailyState();
       dispatch({ type: 'INIT', words, answer, persisted });
     });
   }, []);
-
-  useEffect(() => {
-    if (!state.answer) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      date: getTodayString(),
-      guesses: state.guesses,
-      currentGuess: state.currentGuess,
-      gameStatus: state.gameStatus,
-      letterStates: state.letterStates,
-    }));
-  }, [state.answer, state.guesses, state.currentGuess, state.gameStatus, state.letterStates]);
 
   const addLetter = useCallback((letter) => dispatch({ type: 'ADD_LETTER', letter }), []);
   const deleteLetter = useCallback(() => dispatch({ type: 'DELETE_LETTER' }), []);
@@ -138,6 +119,7 @@ export function useGameState() {
     currentGuess: state.currentGuess,
     gameStatus: state.gameStatus,
     letterStates: state.letterStates,
+    restoredComplete: state.restoredComplete,
     error: state.error,
     invalidCount: state.invalidCount,
     answer: state.answer,
