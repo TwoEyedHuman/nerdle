@@ -1,0 +1,60 @@
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 500px;
+  padding: 0 4px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.key {
+  min-height: 40px;
+  min-width: 30px;
+  padding: 0 6px;
+  flex: 1;
+  max-width: 44px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--color-key);
+  color: var(--color-text-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wide {
+  min-width: 56px;
+  max-width: 66px;
+  flex: 1.5;
+  font-size: 0.65rem;
+}
+
+.correct {
+  background-color: var(--color-correct);
+  color: #fff;
+}
+
+.present {
+  background-color: var(--color-present);
+  color: #fff;
+}
+
+.absent {
+  background-color: var(--color-absent);
+  color: #fff;
+}
+
+.unplayed {
+  background-color: var(--color-key);
+}
