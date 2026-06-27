@@ -1,0 +1,61 @@
+.tile {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 2px solid var(--color-border);
+  color: var(--color-text-primary);
+  user-select: none;
+  perspective: 250px;
+}
+
+.filled {
+  border-color: var(--color-tile-border-filled);
+}
+
+.correct {
+  background-color: var(--color-correct);
+  border-color: var(--color-correct);
+  color: #fff;
+}
+
+.present {
+  background-color: var(--color-present);
+  border-color: var(--color-present);
+  color: #fff;
+}
+
+.absent {
+  background-color: var(--color-absent);
+  border-color: var(--color-absent);
+  color: #fff;
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0);
+    background-color: transparent;
+    border-color: var(--color-tile-border-filled);
+    color: var(--color-text-primary);
+  }
+  49% {
+    transform: rotateX(-90deg);
+    background-color: transparent;
+    border-color: var(--color-tile-border-filled);
+    color: var(--color-text-primary);
+  }
+  50% {
+    transform: rotateX(-90deg);
+  }
+  100% {
+    transform: rotateX(0);
+  }
+}
+
+.reveal {
+  animation: flip 500ms ease forwards;
+  animation-delay: var(--tile-delay, 0ms);
+}

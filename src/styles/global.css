@@ -19,6 +19,7 @@ body {
   --color-absent: #3a3a3c;
   --color-border: #d3d6da;
   --color-key: #818384;
+  --color-tile-border-filled: #878a8c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,5 +33,6 @@ body {
     --color-absent: #3a3a3c;
     --color-border: #3a3a3c;
     --color-key: #818384;
+    --color-tile-border-filled: #878a8c;
   }
 }
