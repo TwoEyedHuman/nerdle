@@ -1,8 +1,12 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from '@/styles/ResultModal.module.css'
+import ScreenshotCard from '@/components/ScreenshotCard'
+import { captureAndDownload } from '@/utils/screenshot'
 
-export default function ResultModal({ isOpen, onClose, onShowStats, gameStatus, answer, guessCount }) {
+export default function ResultModal({ isOpen, onClose, onShowStats, gameStatus, answer, guessCount, guesses }) {
   const modalRef = useRef(null)
+  const cardRef = useRef(null)
+  const [capturing, setCapturing] = useState(false)
 
   useEffect(() => {
     if (!isOpen) return
@@ -35,34 +39,52 @@ export default function ResultModal({ isOpen, onClose, onShowStats, gameStatus, 
     return () => modal.removeEventListener('keydown', trap)
   }, [isOpen])
 
+  async function handleScreenshot() {
+    if (capturing || !cardRef.current) return
+    setCapturing(true)
+    try {
+      await captureAndDownload(cardRef.current)
+    } finally {
+      setCapturing(false)
+    }
+  }
+
   if (!isOpen) return null
 
   const won = gameStatus === 'won'
   const guessDisplay = won ? `${guessCount}/6` : 'X/6'
 
   return (
-    <div className={styles.overlay}>
-      <div
-        className={styles.modal}
-        ref={modalRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Game result"
-      >
-        <p className={styles.message}>
-          {won ? 'You got it!' : 'Better luck tomorrow!'}
-        </p>
-        <p className={styles.answer}>{answer}</p>
-        <p className={styles.guessCount}>{guessDisplay}</p>
-        <div className={styles.actions}>
-          <button className={styles.button} onClick={() => {}}>
-            Screenshot
-          </button>
-          <button className={`${styles.button} ${styles.buttonPrimary}`} onClick={onShowStats}>
-            Stats
-          </button>
+    <>
+      <ScreenshotCard
+        ref={cardRef}
+        guesses={guesses}
+        gameStatus={gameStatus}
+        guessCount={guessCount}
+      />
+      <div className={styles.overlay}>
+        <div
+          className={styles.modal}
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Game result"
+        >
+          <p className={styles.message}>
+            {won ? 'You got it!' : 'Better luck tomorrow!'}
+          </p>
+          <p className={styles.answer}>{answer}</p>
+          <p className={styles.guessCount}>{guessDisplay}</p>
+          <div className={styles.actions}>
+            <button className={styles.button} onClick={handleScreenshot} disabled={capturing}>
+              {capturing ? '...' : 'Screenshot'}
+            </button>
+            <button className={`${styles.button} ${styles.buttonPrimary}`} onClick={onShowStats}>
+              Stats
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

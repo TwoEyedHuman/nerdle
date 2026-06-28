@@ -68,6 +68,7 @@ function App() {
         gameStatus={gameStatus}
         answer={answer}
         guessCount={guesses.length}
+        guesses={guesses}
       />
       <StatsModal
         isOpen={showStats}
