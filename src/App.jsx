@@ -5,16 +5,17 @@ import Board from '@/components/Board'
 import Keyboard from '@/components/Keyboard'
 import Toast from '@/components/Toast'
 import StatsModal from '@/components/StatsModal'
+import ResultModal from '@/components/ResultModal'
 import { useGameState } from '@/hooks/useGameState'
 
 function App() {
-  const { guesses, currentGuess, gameStatus, letterStates, restoredComplete, error, invalidCount, addLetter, deleteLetter, submitGuess } = useGameState()
+  const { guesses, currentGuess, gameStatus, letterStates, restoredComplete, error, invalidCount, answer, addLetter, deleteLetter, submitGuess } = useGameState()
 
   const [shake, setShake] = useState(false)
   const [shakeKey, setShakeKey] = useState(0)
   const [toast, setToast] = useState(null)
   const [showStats, setShowStats] = useState(false)
-  const [_showModal, setShowModal] = useState(false)
+  const [showResult, setShowResult] = useState(false)
   const toastTimer = useRef(null)
   const modalTimer = useRef(null)
 
@@ -37,13 +38,13 @@ function App() {
     if (gameStatus !== 'won' && gameStatus !== 'lost') return
     clearTimeout(modalTimer.current)
     const delay = restoredComplete ? 1000 : FLIP_MODAL_DELAY_MS
-    modalTimer.current = setTimeout(() => setShowModal(true), delay)
+    modalTimer.current = setTimeout(() => setShowResult(true), delay)
     return () => clearTimeout(modalTimer.current)
   }, [gameStatus, restoredComplete])
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (showStats) return
+      if (showStats || showResult) return
       if (gameStatus !== 'playing') return
       if (e.key === 'Backspace') {
         deleteLetter()
@@ -55,11 +56,19 @@ function App() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [showStats, gameStatus, addLetter, deleteLetter, submitGuess])
+  }, [showStats, showResult, gameStatus, addLetter, deleteLetter, submitGuess])
 
   return (
     <div className={styles.container}>
       <Header onStatsClick={() => setShowStats(true)} />
+      <ResultModal
+        isOpen={showResult}
+        onClose={() => setShowResult(false)}
+        onShowStats={() => { setShowResult(false); setShowStats(true) }}
+        gameStatus={gameStatus}
+        answer={answer}
+        guessCount={guesses.length}
+      />
       <StatsModal
         isOpen={showStats}
         onClose={() => setShowStats(false)}
