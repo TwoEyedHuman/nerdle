@@ -27,6 +27,7 @@ export default function Keyboard({ letterStates = {}, onKey, onDelete, onEnter, 
                 onClick={() => handleClick(key)}
                 aria-label={key}
                 disabled={disabled}
+                tabIndex={-1}
               >
                 {key}
               </button>
