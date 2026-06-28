@@ -1,7 +1,8 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,9 +11,10 @@
 
 .modal {
   position: relative;
-  background-color: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  background-color: #0a0a1a;
+  border: 1px solid #2a3060;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.15), 0 0 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(99, 102, 241, 0.1);
   padding: 24px;
   width: min(480px, calc(100vw - 32px));
   max-height: calc(100vh - 64px);
@@ -23,29 +25,37 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  background: none;
-  border: none;
+  background: #0f0f22;
+  border: 1px solid #2a3060;
   cursor: pointer;
-  color: var(--color-text-primary);
+  color: #6472a0;
   font-size: 1rem;
   line-height: 1;
-  padding: 4px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.closeButton:hover {
+  color: #d4e0f0;
+  border-color: #3a4070;
 }
 
 .closeButton:focus-visible {
-  outline: 2px solid var(--color-text-primary);
+  outline: 2px solid rgba(99, 102, 241, 0.7);
   outline-offset: 2px;
 }
 
 .title {
   margin: 0 0 20px;
   text-align: center;
-  font-size: 1rem;
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--color-text-primary);
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
 }
 
 .metrics {
@@ -64,14 +74,17 @@
 .metricValue {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--color-correct);
   line-height: 1;
+  text-shadow: var(--glow-correct);
 }
 
 .metricLabel {
-  font-size: 0.65rem;
-  font-weight: 400;
-  color: var(--color-text-primary);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
   text-align: center;
   max-width: 60px;
 }
@@ -79,11 +92,11 @@
 .sectionTitle {
   margin: 0 0 12px;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
 }
 
 .distribution {
@@ -102,7 +115,7 @@
 .distLabel {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   width: 12px;
   text-align: right;
   flex-shrink: 0;
@@ -113,18 +126,21 @@
 }
 
 .bar {
-  background-color: var(--color-absent);
+  background-color: #1a1a2e;
+  border: 1px solid #2a2a40;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding: 2px 6px;
   min-width: 20px;
-  border-radius: 2px;
+  border-radius: 3px;
   transition: width 0.3s ease;
 }
 
 .barHighlight {
   background-color: var(--color-correct);
+  border-color: var(--color-correct);
+  box-shadow: var(--glow-correct);
 }
 
 .barCount {
@@ -139,13 +155,13 @@
   align-items: center;
   gap: 4px;
   padding-top: 16px;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid #1e2a40;
 }
 
 .countdownLabel {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
 }
@@ -153,7 +169,8 @@
 .countdownTime {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--color-present);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.05em;
+  text-shadow: var(--glow-present);
 }

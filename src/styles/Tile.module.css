@@ -3,35 +3,41 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.7rem;
   font-weight: 700;
   text-transform: uppercase;
   border: 2px solid var(--color-border);
   color: var(--color-text-primary);
   user-select: none;
   perspective: 250px;
+  border-radius: 4px;
+  transition: border-color 0.1s;
+  background-color: var(--color-surface);
 }
 
 .filled {
   border-color: var(--color-tile-border-filled);
+  background-color: #0f0f22;
 }
 
 .correct {
   background-color: var(--color-correct);
   border-color: var(--color-correct);
   color: #fff;
+  box-shadow: var(--glow-correct);
 }
 
 .present {
   background-color: var(--color-present);
   border-color: var(--color-present);
-  color: #fff;
+  color: #0a0a0f;
+  box-shadow: var(--glow-present);
 }
 
 .absent {
   background-color: var(--color-absent);
   border-color: var(--color-absent);
-  color: #fff;
+  color: #4a5a6a;
 }
 
 @keyframes bounce {
@@ -39,6 +45,12 @@
   30% { transform: translateY(-24px); }
   60% { transform: translateY(-12px); }
   80% { transform: translateY(-4px); }
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
 }
 
 @keyframes flip {
@@ -63,10 +75,14 @@
 }
 
 .reveal {
-  animation: flip 500ms ease forwards;
+  animation: flip 500ms ease both;
   animation-delay: var(--tile-delay, 0ms);
 }
 
 .bounce {
-  animation: flip 500ms ease forwards var(--tile-delay, 0ms), bounce 600ms ease forwards var(--bounce-delay, 0ms);
+  animation: flip 500ms ease both var(--tile-delay, 0ms), bounce 600ms ease forwards var(--bounce-delay, 0ms);
+}
+
+.filledPop {
+  animation: pop 100ms ease;
 }

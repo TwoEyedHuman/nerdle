@@ -1,14 +1,18 @@
 .toast {
   position: absolute;
-  top: -44px;
+  top: -48px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--color-text-primary);
-  color: var(--color-background);
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
+  background: #0a0a1a;
+  color: #d4e0f0;
+  border: 1px solid #2a3060;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2), 0 0 16px rgba(99, 102, 241, 0.3), 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   white-space: nowrap;
   z-index: 10;
   pointer-events: none;

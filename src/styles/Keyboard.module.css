@@ -14,15 +14,15 @@
 }
 
 .key {
-  min-height: 40px;
+  min-height: 44px;
   min-width: 30px;
   padding: 0 6px;
   flex: 1;
   max-width: 44px;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid #1e2a40;
+  border-radius: 6px;
   background-color: var(--color-key);
-  color: var(--color-text-primary);
+  color: #8898b0;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -31,6 +31,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.1s, color 0.1s, box-shadow 0.1s, transform 0.08s;
+  box-shadow: 0 2px 0 #000, 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.key:hover {
+  background-color: #1e2040;
+  color: #d4e0f0;
+}
+
+.key:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #000;
 }
 
 .wide {
@@ -42,17 +54,38 @@
 
 .correct {
   background-color: var(--color-correct);
+  border-color: var(--color-correct);
+  color: #fff;
+  box-shadow: 0 2px 0 #006644, var(--glow-correct);
+}
+
+.correct:hover {
+  background-color: #00e89a;
   color: #fff;
 }
 
 .present {
   background-color: var(--color-present);
-  color: #fff;
+  border-color: var(--color-present);
+  color: #0a0a0f;
+  box-shadow: 0 2px 0 #8a6a00, var(--glow-present);
+}
+
+.present:hover {
+  background-color: #ffd460;
+  color: #0a0a0f;
 }
 
 .absent {
   background-color: var(--color-absent);
-  color: #fff;
+  border-color: #10101e;
+  color: #2a3a4a;
+  box-shadow: 0 2px 0 #000;
+}
+
+.absent:hover {
+  background-color: #1e1e32;
+  color: #3a4a5a;
 }
 
 .unplayed {

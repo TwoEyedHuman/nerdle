@@ -9,7 +9,7 @@ import ResultModal from '@/components/ResultModal'
 import { useGameState } from '@/hooks/useGameState'
 
 function App() {
-  const { guesses, currentGuess, gameStatus, letterStates, restoredComplete, error, invalidCount, answer, addLetter, deleteLetter, submitGuess } = useGameState()
+  const { guesses, currentGuess, gameStatus, letterStates, restoredComplete, restoredGuessCount, error, invalidCount, answer, addLetter, deleteLetter, submitGuess } = useGameState()
 
   const [shake, setShake] = useState(false)
   const [shakeKey, setShakeKey] = useState(0)
@@ -30,6 +30,11 @@ function App() {
       setShake(false)
     }, 1500)
   }, [invalidCount, error])
+
+  useEffect(() => {
+    if (guesses.length === 0) return
+    setShake(false)
+  }, [guesses.length])
 
   // 800ms after last tile flip (8 tiles × 300ms stagger + 500ms duration = 2600ms)
   const FLIP_MODAL_DELAY_MS = (8 - 1) * 300 + 500 + 800;
@@ -86,6 +91,7 @@ function App() {
             shake={shake}
             shakeKey={shakeKey}
             winRow={gameStatus === 'won' ? guesses.length - 1 : -1}
+            restoredGuessCount={restoredGuessCount}
           />
         </div>
         <Keyboard

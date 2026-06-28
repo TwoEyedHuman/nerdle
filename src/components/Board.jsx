@@ -7,7 +7,7 @@ const COLS = 8
 // Last flip ends at (COLS-1)*300+500ms; bounce tiles stagger 100ms each after that
 const LAST_FLIP_END_MS = (COLS - 1) * 300 + 500;
 
-export default function Board({ guesses = [], currentGuess = '', currentRow = 0, shake = false, shakeKey = 0, winRow = -1 }) {
+export default function Board({ guesses = [], currentGuess = '', currentRow = 0, shake = false, shakeKey = 0, winRow = -1, restoredGuessCount = 0 }) {
   return (
     <div className={styles.board}>
       {Array.from({ length: ROWS }, (_, rowIndex) => {
@@ -16,6 +16,7 @@ export default function Board({ guesses = [], currentGuess = '', currentRow = 0,
         if (isSubmitted) {
           const { word, results } = guesses[rowIndex]
           const isWinRow = rowIndex === winRow
+          const wasRestored = rowIndex < restoredGuessCount
           return (
             <div key={rowIndex} className={styles.row}>
               {Array.from({ length: COLS }, (_, colIndex) => (
@@ -23,9 +24,9 @@ export default function Board({ guesses = [], currentGuess = '', currentRow = 0,
                   key={colIndex}
                   letter={word[colIndex] ?? ''}
                   state={results[colIndex] ?? 'empty'}
-                  reveal
+                  reveal={!wasRestored}
                   index={colIndex}
-                  bounceDelay={isWinRow ? LAST_FLIP_END_MS + colIndex * 100 : null}
+                  bounceDelay={isWinRow && !wasRestored ? LAST_FLIP_END_MS + colIndex * 100 : null}
                 />
               ))}
             </div>

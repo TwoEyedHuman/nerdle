@@ -30,6 +30,7 @@ export const initialState = {
   gameStatus: 'playing',
   letterStates: {},
   restoredComplete: false,
+  restoredGuessCount: 0,
   error: null,
   invalidCount: 0,
 };
@@ -54,6 +55,7 @@ export function gameReducer(state, action) {
           gameStatus: savedStatus,
           letterStates,
           restoredComplete: savedStatus === 'won' || savedStatus === 'lost',
+          restoredGuessCount: savedGuesses.length,
         };
       }
       return { ...state, words, answer };
@@ -135,6 +137,7 @@ export function useGameState() {
     gameStatus: state.gameStatus,
     letterStates: state.letterStates,
     restoredComplete: state.restoredComplete,
+    restoredGuessCount: state.restoredGuessCount,
     error: state.error,
     invalidCount: state.invalidCount,
     answer: state.answer,
