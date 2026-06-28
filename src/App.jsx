@@ -4,6 +4,7 @@ import Header from '@/components/Header'
 import Board from '@/components/Board'
 import Keyboard from '@/components/Keyboard'
 import Toast from '@/components/Toast'
+import StatsModal from '@/components/StatsModal'
 import { useGameState } from '@/hooks/useGameState'
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
   const [shake, setShake] = useState(false)
   const [shakeKey, setShakeKey] = useState(0)
   const [toast, setToast] = useState(null)
+  const [showStats, setShowStats] = useState(false)
   const [_showModal, setShowModal] = useState(false)
   const toastTimer = useRef(null)
   const modalTimer = useRef(null)
@@ -41,6 +43,7 @@ function App() {
 
   useEffect(() => {
     function handleKeyDown(e) {
+      if (showStats) return
       if (gameStatus !== 'playing') return
       if (e.key === 'Backspace') {
         deleteLetter()
@@ -52,11 +55,17 @@ function App() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [gameStatus, addLetter, deleteLetter, submitGuess])
+  }, [showStats, gameStatus, addLetter, deleteLetter, submitGuess])
 
   return (
     <div className={styles.container}>
-      <Header onStatsClick={() => {}} />
+      <Header onStatsClick={() => setShowStats(true)} />
+      <StatsModal
+        isOpen={showStats}
+        onClose={() => setShowStats(false)}
+        gameStatus={gameStatus}
+        winGuessCount={gameStatus === 'won' ? guesses.length : null}
+      />
       <main className={styles.main}>
         <div className={styles.boardContainer}>
           <Toast message={toast} />
